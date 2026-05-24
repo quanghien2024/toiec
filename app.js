@@ -156,6 +156,8 @@ const SEED_VOCAB = [
   { word: 'infer', meaning: 'suy ra', pos: 'verb', example: 'What can we infer about K.P.?' },
   { word: 'loyal', meaning: 'trung thành', pos: 'adj', example: 'To keep customers loyal.' },
   { word: 'gain', meaning: 'đạt được, thu được', pos: 'verb', example: 'To gain new customers.' },
+  { word: 'files', meaning: 'tệp tin, hồ sơ', pos: 'noun', example: '' },
+  { word: 'technicians', meaning: 'kỹ thuật viên', pos: 'noun', example: '' },
 ];
 
 // ── Init ──────────────────────────────────────────────────────
@@ -195,12 +197,21 @@ function resetSession() {
 }
 
 function seedVocab() {
-  const seen = new Set(vocab.map(v => v.word.toLowerCase()));
   let added = false;
   SEED_VOCAB.forEach((item, i) => {
     const key = item.word.toLowerCase();
-    if (seen.has(key)) return;
-    seen.add(key);
+    const existingIdx = vocab.findIndex(v => v.word.toLowerCase() === key);
+    
+    if (existingIdx !== -1) {
+      if (vocab[existingIdx].meaning === '(chưa dịch)' || vocab[existingIdx].meaning === '') {
+        vocab[existingIdx].meaning = item.meaning;
+        vocab[existingIdx].pos = item.pos;
+        if (item.example) vocab[existingIdx].example = item.example;
+        added = true;
+      }
+      return;
+    }
+
     vocab.push({
       id: 'seed_' + Date.now() + '_' + Math.random().toString(36).slice(2),
       word: item.word,
@@ -296,8 +307,6 @@ function renderVocabList(filter = null) {
       <td data-label="Thao tác">
         <div class="table-actions">
           <button class="btn-icon speak" title="Phát âm" onclick="speakWord('${escHtml(v.word)}')">🔊</button>
-          <button class="btn-icon edit" title="Sửa" onclick="openEditModal('${v.id}')">✏️</button>
-          <button class="btn-icon delete" title="Xóa" onclick="deleteWord('${v.id}')">🗑️</button>
         </div>
       </td>
     </tr>
@@ -401,174 +410,6 @@ function doResetSession() {
   saveSession();
   renderRandomStudy();
   showToast('Đã reset! Bắt đầu vòng mới 🎉', 'success');
-}
-
-// ── Extractor ─────────────────────────────────────────────────
-let extractedWords = [];
-
-function extractWords() {
-  const text = document.getElementById('extractor-input').value;
-  if (!text.trim()) { showToast('Hãy dán đoạn văn vào ô trên!', 'warning'); return; }
-
-  // Tokenize: lowercase, split on non-alpha
-  const tokens = text.toLowerCase()
-    .replace(/['']/g, '')
-    .split(/[^a-z]+/)
-    .filter(w => w.length > 2 && !STOP_WORDS.has(w));
-
-  // Deduplicate tokens from this batch
-  const unique = [...new Set(tokens)];
-
-  // Mark which are already in vocab
-  const existingWords = new Set(vocab.map(v => v.word.toLowerCase()));
-
-  extractedWords = unique.map(w => ({
-    word: w,
-    pos: guessPos(w),
-    selected: !existingWords.has(w),
-    duplicate: existingWords.has(w),
-  }));
-
-  const preview = document.getElementById('extracted-preview');
-  preview.classList.add('visible');
-
-  const newCount = extractedWords.filter(w => !w.duplicate).length;
-  const dupCount = extractedWords.filter(w => w.duplicate).length;
-  document.getElementById('extract-meta').textContent =
-    `Tìm thấy ${extractedWords.length} từ · ${newCount} từ mới · ${dupCount} từ đã có (màu vàng)`;
-
-  const chipsEl = document.getElementById('word-chips');
-  chipsEl.innerHTML = extractedWords.map((item, i) =>
-    `<span class="word-chip ${item.duplicate ? 'duplicate' : ''} ${!item.selected ? 'deselected' : ''}"
-      data-idx="${i}" onclick="toggleChip(${i})">${item.word}${item.duplicate ? ' ⚠' : ''}</span>`
-  ).join('');
-}
-
-function toggleChip(idx) {
-  if (extractedWords[idx].duplicate) return; // can't toggle duplicates
-  extractedWords[idx].selected = !extractedWords[idx].selected;
-  const chip = document.querySelector(`.word-chip[data-idx="${idx}"]`);
-  chip?.classList.toggle('deselected');
-}
-
-async function addExtractedWords() {
-  const toAdd = extractedWords.filter(w => w.selected && !w.duplicate);
-  if (toAdd.length === 0) { showToast('Không có từ mới nào được chọn!', 'warning'); return; }
-
-  const btn = document.getElementById('btn-add-extracted');
-  btn.disabled = true;
-  btn.textContent = '⏳ Đang thêm...';
-
-  const existingWords = new Set(vocab.map(v => v.word.toLowerCase()));
-
-  for (const item of toAdd) {
-    if (existingWords.has(item.word)) continue;
-    existingWords.add(item.word);
-    vocab.push({
-      id: 'w_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-      word: item.word,
-      meaning: '(chưa dịch)',
-      pos: item.pos,
-      mastered: false,
-      addedAt: Date.now(),
-      example: '',
-    });
-    await sleep(5);
-  }
-
-  saveData();
-  btn.disabled = false;
-  btn.textContent = '✅ Thêm vào kho từ';
-
-  document.getElementById('extractor-input').value = '';
-  document.getElementById('extracted-preview').classList.remove('visible');
-  extractedWords = [];
-
-  showToast(`Đã thêm ${toAdd.length} từ vào kho từ vựng! 🎉`, 'success');
-  renderDashboard();
-  updateNavStats();
-}
-
-function clearExtractor() {
-  document.getElementById('extractor-input').value = '';
-  document.getElementById('extracted-preview').classList.remove('visible');
-  extractedWords = [];
-}
-
-// ── Word CRUD ─────────────────────────────────────────────────
-function openAddModal() {
-  currentEditId = null;
-  document.getElementById('modal-title').textContent = 'Thêm từ vựng mới';
-  document.getElementById('modal-word').value = '';
-  document.getElementById('modal-meaning').value = '';
-  document.getElementById('modal-pos').value = 'noun';
-  document.getElementById('modal-example').value = '';
-  document.getElementById('word-modal').classList.add('visible');
-}
-
-function openEditModal(id) {
-  const v = vocab.find(x => x.id === id);
-  if (!v) return;
-  currentEditId = id;
-  document.getElementById('modal-title').textContent = 'Chỉnh sửa từ vựng';
-  document.getElementById('modal-word').value = v.word;
-  document.getElementById('modal-meaning').value = v.meaning;
-  document.getElementById('modal-pos').value = v.pos;
-  document.getElementById('modal-example').value = v.example || '';
-  document.getElementById('word-modal').classList.add('visible');
-}
-
-function closeModal() {
-  document.getElementById('word-modal').classList.remove('visible');
-  currentEditId = null;
-}
-
-function saveModal() {
-  const word = document.getElementById('modal-word').value.trim().toLowerCase();
-  const meaning = document.getElementById('modal-meaning').value.trim();
-  const pos = document.getElementById('modal-pos').value;
-  const example = document.getElementById('modal-example').value.trim();
-
-  if (!word || !meaning) { showToast('Hãy điền đủ từ và nghĩa!', 'error'); return; }
-
-  if (currentEditId) {
-    const idx = vocab.findIndex(v => v.id === currentEditId);
-    if (idx >= 0) { vocab[idx] = { ...vocab[idx], word, meaning, pos, example }; }
-    showToast('Đã cập nhật từ vựng!', 'success');
-  } else {
-    // Check duplicate
-    const exists = vocab.some(v => v.word.toLowerCase() === word);
-    if (exists) { showToast(`"${word}" đã có trong kho từ!`, 'warning'); return; }
-
-    vocab.push({
-      id: 'w_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-      word, meaning, pos, example,
-      mastered: false,
-      addedAt: Date.now(),
-    });
-    showToast('Đã thêm từ vựng mới! ✨', 'success');
-  }
-
-  saveData();
-  closeModal();
-  renderVocabList();
-  renderDashboard();
-  updateNavStats();
-}
-
-function deleteWord(id) {
-  const v = vocab.find(x => x.id === id);
-  if (!v) return;
-  if (!confirm(`Xóa từ "${v.word}"?`)) return;
-  vocab = vocab.filter(x => x.id !== id);
-  // Remove from session too
-  session.usedIds = session.usedIds.filter(uid => uid !== id);
-  saveData();
-  saveSession();
-  renderVocabList();
-  renderDashboard();
-  updateNavStats();
-  showToast(`Đã xóa "${v.word}"`, 'info');
 }
 
 function toggleMastered(id) {
@@ -700,42 +541,15 @@ function setupEventListeners() {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 
-  // FAB add button
-  document.getElementById('fab-add')?.addEventListener('click', openAddModal);
-
-  // Extractor
-  document.getElementById('btn-extract')?.addEventListener('click', extractWords);
-  document.getElementById('btn-clear-extract')?.addEventListener('click', clearExtractor);
-  document.getElementById('btn-add-extracted')?.addEventListener('click', addExtractedWords);
-
-  // Vocab list controls
-  document.getElementById('search-input')?.addEventListener('input', () => renderVocabList());
-  document.getElementById('pos-filter')?.addEventListener('change', () => renderVocabList());
-  document.getElementById('status-filter')?.addEventListener('change', () => renderVocabList());
-  document.getElementById('btn-add-word')?.addEventListener('click', openAddModal);
-
   // Random
   document.getElementById('btn-next-random')?.addEventListener('click', doNextRandom);
   document.getElementById('btn-reset-session')?.addEventListener('click', doResetSession);
   document.getElementById('btn-reset-session-2')?.addEventListener('click', doResetSession);
+}
 
-  // Modal
-  document.getElementById('btn-save-modal')?.addEventListener('click', saveModal);
-  document.getElementById('btn-cancel-modal')?.addEventListener('click', closeModal);
-  document.getElementById('word-modal')?.addEventListener('click', (e) => { if (e.target === document.getElementById('word-modal')) closeModal(); });
-
-  // Settings
-  document.getElementById('btn-export')?.addEventListener('click', exportData);
-  document.getElementById('btn-clear-all')?.addEventListener('click', clearAllData);
-  document.getElementById('fileInput')?.addEventListener('change', (e) => importData(e.target.files[0]));
-  document.getElementById('import-area')?.addEventListener('click', () => document.getElementById('fileInput')?.click());
-  document.getElementById('import-area')?.addEventListener('dragover', (e) => { e.preventDefault(); });
-  document.getElementById('import-area')?.addEventListener('drop', (e) => { e.preventDefault(); importData(e.dataTransfer.files[0]); });
-
-  // Keyboard: Enter saves modal
+  // Keyboard
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
-    if (e.key === 'Enter' && document.getElementById('word-modal')?.classList.contains('visible')) saveModal();
+    //
   });
 }
 
