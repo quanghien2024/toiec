@@ -161,9 +161,7 @@ const SEED_VOCAB = [
 // ── Init ──────────────────────────────────────────────────────
 function initApp() {
   loadData();
-  if (vocab.length === 0) {
-    seedVocab();
-  }
+  seedVocab(); // Luôn chạy để merge từ mới vào kho hiện có
   loadSession();
   renderAll();
   setupEventListeners();
@@ -197,22 +195,24 @@ function resetSession() {
 }
 
 function seedVocab() {
-  const seen = new Set();
+  const seen = new Set(vocab.map(v => v.word.toLowerCase()));
+  let added = false;
   SEED_VOCAB.forEach((item, i) => {
     const key = item.word.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
     vocab.push({
-      id: 'seed_' + i,
+      id: 'seed_' + Date.now() + '_' + Math.random().toString(36).slice(2),
       word: item.word,
       meaning: item.meaning,
       pos: item.pos,
       mastered: false,
-      addedAt: Date.now() - (SEED_VOCAB.length - i) * 1000,
+      addedAt: Date.now(),
       example: item.example || '',
     });
+    added = true;
   });
-  saveData();
+  if (added) saveData();
 }
 
 // ── Tab Navigation ────────────────────────────────────────────
