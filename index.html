@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ứng dụng học từ vựng TOEIC thông minh - trích xuất, lưu trữ và ôn luyện từ vựng tiếng Anh hiệu quả." />
+  <title>TOEIC Vocab Master 📚</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       TOP NAVIGATION (Desktop)
+  ══════════════════════════════════════ -->
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <a href="#" class="nav-logo" onclick="switchTab('dashboard'); return false;">
+      <div class="logo-icon">📚</div>
+      <span>TOEIC Vocab</span>
+    </a>
+
+    <div class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-tab="dashboard" role="tab" aria-selected="true" id="navtab-dashboard">
+        🏠 Dashboard
+      </button>
+      <button class="nav-tab" data-tab="extract" role="tab" aria-selected="false" id="navtab-extract">
+        ✨ Trích xuất
+      </button>
+      <button class="nav-tab" data-tab="vocab" role="tab" aria-selected="false" id="navtab-vocab">
+        📖 Từ vựng
+      </button>
+      <button class="nav-tab" data-tab="random" role="tab" aria-selected="false" id="navtab-random">
+        🎲 Ôn luyện
+      </button>
+      <button class="nav-tab" data-tab="settings" role="tab" aria-selected="false" id="navtab-settings">
+        ⚙️ Cài đặt
+      </button>
+    </div>
+
+    <div class="nav-stats" aria-label="Vocabulary stats">
+      Tổng: <strong id="nav-total">0</strong> từ &nbsp;|&nbsp; Thuộc: <strong id="nav-mastered">0</strong>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════ -->
+  <main class="app-container">
+
+    <!-- ── TAB: DASHBOARD ── -->
+    <section class="tab-content active" id="tab-dashboard" role="tabpanel" aria-labelledby="navtab-dashboard">
+      <div class="dashboard">
+
+        <div class="dashboard-hero">
+          <h1>TOEIC Vocab Master 🚀</h1>
+          <p>Học từ vựng TOEIC thông minh — dán đoạn văn bất kỳ, hệ thống tự động trích xuất, khử trùng và lưu từ vựng cho bạn. Ôn luyện với chế độ random 50 từ không trùng lặp.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📖</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Tổng từ vựng</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="stat-mastered">0</div>
+            <div class="stat-label">Đã thuộc</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value" id="stat-pct">0%</div>
+            <div class="stat-label">Tỉ lệ thuộc</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎲</div>
+            <div class="stat-value" id="stat-remaining">0</div>
+            <div class="stat-label">Còn lại vòng <span id="stat-round">1</span></div>
+          </div>
+        </div>
+
+        <div class="recent-words-section">
+          <h2>📝 Từ vựng thêm gần đây</h2>
+          <div class="recent-words-grid" id="recent-words-grid">
+            <span class="recent-chip shimmer" style="width:80px;height:30px;border-radius:999px;"></span>
+            <span class="recent-chip shimmer" style="width:100px;height:30px;border-radius:999px;"></span>
+            <span class="recent-chip shimmer" style="width:70px;height:30px;border-radius:999px;"></span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="switchTab('extract')">✨ Trích xuất từ vựng mới</button>
+          <button class="btn btn-secondary" onclick="switchTab('random')">🎲 Bắt đầu ôn luyện</button>
+          <button class="btn btn-secondary" onclick="switchTab('vocab')">📖 Xem toàn bộ từ vựng</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── TAB: EXTRACT ── -->
+    <section class="tab-content" id="tab-extract" role="tabpanel" aria-labelledby="navtab-extract">
+      <div class="section-page">
+        <div class="section-header">
+          <h2 class="section-title">✨ <span>Trích xuất Từ vựng</span></h2>
+        </div>
+
+        <div class="extractor-box">
+          <label for="extractor-input">DÁN ĐOẠN VĂN TIẾNG ANH VÀO ĐÂY</label>
+          <textarea
+            id="extractor-input"
+            class="extractor-textarea"
+            placeholder="Ví dụ: dán bài đọc TOEIC từ Study4, ETS, v.v. vào đây...&#10;&#10;Hệ thống sẽ tự động:&#10;• Lọc bỏ các từ thông dụng (the, a, is, are...)&#10;• Giữ lại các từ quan trọng&#10;• Đánh dấu từ đã có trong kho (màu vàng)&#10;• Khử trùng tự động"
+            aria-label="Input text for vocabulary extraction"
+          ></textarea>
+          <div class="extractor-actions">
+            <button class="btn btn-primary" id="btn-extract">
+              🔍 Trích xuất từ vựng
+            </button>
+            <button class="btn btn-secondary" id="btn-clear-extract">
+              🗑️ Xóa nội dung
+            </button>
+          </div>
+        </div>
+
+        <div class="extracted-preview" id="extracted-preview">
+          <h3>📋 Từ vựng được trích xuất</h3>
+          <div class="extracted-meta" id="extract-meta"></div>
+
+          <div class="word-chips" id="word-chips"></div>
+
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+            💡 <strong>Xanh</strong> = từ mới sẽ thêm vào · <strong>Vàng</strong> = đã có trong kho (không thêm lại) · Nhấn vào từ để bỏ chọn
+          </p>
+
+          <div class="extractor-actions">
+            <button class="btn btn-success" id="btn-add-extracted">
+              ✅ Thêm vào kho từ vựng
+            </button>
+          </div>
+        </div>
+
+        <div class="extractor-box" style="background:rgba(108,99,255,0.05); border-color:rgba(108,99,255,0.2);">
+          <h3 style="font-size:0.95rem; margin-bottom:12px; color:var(--accent-primary);">💡 Hướng dẫn sử dụng</h3>
+          <ol style="color:var(--text-secondary); font-size:0.88rem; line-height:2; padding-left:18px;">
+            <li>Vào <strong>Study4</strong> hoặc bất kỳ trang TOEIC nào, copy bài đọc/câu hỏi</li>
+            <li>Dán vào ô trên và nhấn <strong>"Trích xuất từ vựng"</strong></li>
+            <li>Hệ thống tự lọc stop words, khử trùng, hiển thị danh sách từ tiềm năng</li>
+            <li>Bỏ chọn các từ không muốn thêm, rồi nhấn <strong>"Thêm vào kho"</strong></li>
+            <li>Sang tab <strong>Từ vựng</strong> để chỉnh nghĩa tiếng Việt cho từng từ</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: VOCABULARY LIST ── -->
+    <section class="tab-content" id="tab-vocab" role="tabpanel" aria-labelledby="navtab-vocab">
+      <div class="section-page">
+        <div class="section-header">
+          <h2 class="section-title">📖 <span>Tất cả Từ vựng</span></h2>
+          <button class="btn btn-primary" id="btn-add-word">+ Thêm từ thủ công</button>
+        </div>
+
+        <div class="vocab-controls">
+          <input
+            type="search"
+            id="search-input"
+            class="search-input"
+            placeholder="🔍 Tìm từ vựng hoặc nghĩa..."
+            aria-label="Search vocabulary"
+          />
+          <select id="pos-filter" class="filter-select" aria-label="Filter by part of speech">
+            <option value="all">Tất cả loại từ</option>
+            <option value="noun">Danh từ</option>
+            <option value="verb">Động từ</option>
+            <option value="adj">Tính từ</option>
+            <option value="adv">Trạng từ</option>
+            <option value="other">Khác</option>
+          </select>
+          <select id="status-filter" class="filter-select" aria-label="Filter by mastery status">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="unmastered">Chưa thuộc</option>
+            <option value="mastered">Đã thuộc</option>
+          </select>
+          <span style="font-size:0.82rem; color:var(--text-muted);">
+            Hiển thị <strong id="vocab-count">0</strong> từ
+          </span>
+        </div>
+
+        <div class="vocab-table-wrapper">
+          <table class="vocab-table" aria-label="Vocabulary list">
+            <thead>
+              <tr>
+                <th>Từ vựng</th>
+                <th>Nghĩa (Tiếng Việt)</th>
+                <th>Loại từ</th>
+                <th>Ví dụ</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="vocab-tbody"></tbody>
+          </table>
+          <div class="empty-state" id="vocab-empty" style="display:none;">
+            <div class="empty-icon">🔍</div>
+            <p>Không tìm thấy từ vựng phù hợp.<br>Thử thay đổi bộ lọc hoặc thêm từ mới!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: RANDOM STUDY ── -->
+    <section class="tab-content" id="tab-random" role="tabpanel" aria-labelledby="navtab-random">
+      <div class="random-study">
+        <div class="random-header">
+          <h2 class="section-title" style="font-size:1.4rem;">🎲 <span>Ôn luyện Random</span></h2>
+
+          <div class="progress-bar-wrapper">
+            <div class="progress-label">
+              <span id="random-progress-label">0 / 0 từ đã ôn</span>
+              <span id="random-avail" style="color:var(--accent-secondary);">0 còn lại</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="random-progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="round-badge" id="random-round-badge">Vòng 1</div>
+        </div>
+
+        <div class="random-actions" style="margin-bottom:24px;">
+          <button class="btn btn-primary" id="btn-next-random">
+            🎲 Random 50 từ tiếp theo
+          </button>
+          <button class="btn btn-secondary" id="btn-reset-session">
+            🔄 Reset vòng ôn
+          </button>
+          <span style="font-size:0.82rem; color:var(--text-muted);">Nhấn vào thẻ để xem nghĩa</span>
+        </div>
+
+        <div class="session-complete" id="session-complete">
+          <div style="font-size:3rem; margin-bottom:16px;">🎉</div>
+          <h2>Hoàn thành vòng ôn luyện!</h2>
+          <p>Bạn đã xem qua toàn bộ <strong id="session-total-count"></strong> từ trong kho. Nhấn Reset để bắt đầu vòng mới!</p>
+          <button class="btn btn-primary" id="btn-reset-session-2" style="margin:0 auto;">🔄 Bắt đầu vòng mới</button>
+        </div>
+
+        <div class="random-grid" id="random-grid">
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-icon">📚</div>
+            <p>Nhấn nút Random để bắt đầu ôn luyện!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: SETTINGS ── -->
+    <section class="tab-content" id="tab-settings" role="tabpanel" aria-labelledby="navtab-settings">
+      <div class="section-page">
+        <div class="section-header">
+          <h2 class="section-title">⚙️ <span>Cài đặt & Sao lưu</span></h2>
+        </div>
+
+        <div class="settings-grid">
+
+          <div class="settings-card">
+            <h3>💾 Xuất dữ liệu</h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px; line-height:1.7;">
+              Xuất toàn bộ kho từ vựng ra file JSON. Bạn có thể dùng file này để nhập lại trên thiết bị khác (điện thoại ↔ máy tính).
+            </p>
+            <button class="btn btn-primary" id="btn-export" style="width:100%; justify-content:center;">
+              📥 Xuất file JSON
+            </button>
+          </div>
+
+          <div class="settings-card">
+            <h3>📤 Nhập dữ liệu</h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px; line-height:1.7;">
+              Nhập file JSON đã xuất trước đó. Các từ trùng sẽ được tự động bỏ qua (không ghi đè).
+            </p>
+            <div class="import-area" id="import-area" role="button" tabindex="0" aria-label="Import JSON file">
+              <div class="import-icon">📂</div>
+              <p>Kéo thả file vào đây<br><small>hoặc nhấn để chọn file .json</small></p>
+            </div>
+            <input type="file" id="fileInput" accept=".json" />
+          </div>
+
+          <div class="settings-card">
+            <h3>🗑️ Quản lý dữ liệu</h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px; line-height:1.7;">
+              Xóa toàn bộ dữ liệu từ vựng khỏi trình duyệt. <strong style="color:var(--accent-danger);">Không thể hoàn tác!</strong>
+            </p>
+            <button class="btn btn-danger" id="btn-clear-all" style="width:100%; justify-content:center;">
+              ⚠️ Xóa toàn bộ từ vựng
+            </button>
+          </div>
+
+          <div class="settings-card">
+            <h3>📱 Cách dùng trên điện thoại</h3>
+            <ol style="color:var(--text-secondary); font-size:0.88rem; line-height:2; padding-left:18px;">
+              <li>Mở file <code style="color:var(--accent-primary);">index.html</code> trên máy tính</li>
+              <li>Xuất file JSON từ máy tính (nút "Xuất file JSON")</li>
+              <li>Gửi file JSON sang điện thoại (Zalo, email, Drive...)</li>
+              <li>Mở <code style="color:var(--accent-primary);">index.html</code> trên điện thoại</li>
+              <li>Nhập file JSON vừa nhận vào app</li>
+              <li>Từ vựng đã đồng bộ! 🎉</li>
+            </ol>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       BOTTOM NAV (Mobile)
+  ══════════════════════════════════════ -->
+  <nav class="bottom-nav" role="navigation" aria-label="Mobile navigation">
+    <button class="bottom-nav-item active" data-tab="dashboard">
+      <span class="nav-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="extract">
+      <span class="nav-icon">✨</span>
+      <span>Trích xuất</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="vocab">
+      <span class="nav-icon">📖</span>
+      <span>Từ vựng</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="random">
+      <span class="nav-icon">🎲</span>
+      <span>Ôn luyện</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="settings">
+      <span class="nav-icon">⚙️</span>
+      <span>Cài đặt</span>
+    </button>
+  </nav>
+
+  <!-- FAB for mobile add -->
+  <button class="fab" id="fab-add" aria-label="Thêm từ vựng mới">+</button>
+
+  <!-- ══════════════════════════════════════
+       MODAL: ADD / EDIT WORD
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay" id="word-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <h3 id="modal-title">Thêm từ vựng mới</h3>
+
+      <div class="modal-form-group">
+        <label for="modal-word">Từ vựng (Tiếng Anh)</label>
+        <input type="text" id="modal-word" class="modal-input" placeholder="VD: negotiate" autocomplete="off" />
+      </div>
+
+      <div class="modal-form-group">
+        <label for="modal-meaning">Nghĩa (Tiếng Việt)</label>
+        <input type="text" id="modal-meaning" class="modal-input" placeholder="VD: đàm phán, thương lượng" />
+      </div>
+
+      <div class="modal-form-group">
+        <label for="modal-pos">Loại từ</label>
+        <select id="modal-pos" class="modal-select">
+          <option value="noun">Danh từ (Noun)</option>
+          <option value="verb">Động từ (Verb)</option>
+          <option value="adj">Tính từ (Adjective)</option>
+          <option value="adv">Trạng từ (Adverb)</option>
+          <option value="other">Khác</option>
+        </select>
+      </div>
+
+      <div class="modal-form-group">
+        <label for="modal-example">Ví dụ (tùy chọn)</label>
+        <input type="text" id="modal-example" class="modal-input" placeholder="VD: We need to negotiate a new contract." />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="btn-cancel-modal">Hủy</button>
+        <button class="btn btn-primary" id="btn-save-modal">💾 Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TOAST NOTIFICATIONS
+  ══════════════════════════════════════ -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
