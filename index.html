@@ -31,9 +31,6 @@
       <button class="nav-tab" data-tab="random" role="tab" aria-selected="false" id="navtab-random">
         🎲 Ôn luyện
       </button>
-      <button class="nav-tab" data-tab="settings" role="tab" aria-selected="false" id="navtab-settings">
-        ⚙️ Cài đặt
-      </button>
     </div>
 
     <div class="nav-stats" aria-label="Vocabulary stats">
@@ -254,63 +251,6 @@
       </div>
     </section>
 
-    <!-- ── TAB: SETTINGS ── -->
-    <section class="tab-content" id="tab-settings" role="tabpanel" aria-labelledby="navtab-settings">
-      <div class="section-page">
-        <div class="section-header">
-          <h2 class="section-title">⚙️ <span>Cài đặt & Sao lưu</span></h2>
-        </div>
-
-        <div class="settings-grid">
-
-          <div class="settings-card">
-            <h3>💾 Xuất dữ liệu</h3>
-            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px; line-height:1.7;">
-              Xuất toàn bộ kho từ vựng ra file JSON. Bạn có thể dùng file này để nhập lại trên thiết bị khác (điện thoại ↔ máy tính).
-            </p>
-            <button class="btn btn-primary" id="btn-export" style="width:100%; justify-content:center;">
-              📥 Xuất file JSON
-            </button>
-          </div>
-
-          <div class="settings-card">
-            <h3>📤 Nhập dữ liệu</h3>
-            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px; line-height:1.7;">
-              Nhập file JSON đã xuất trước đó. Các từ trùng sẽ được tự động bỏ qua (không ghi đè).
-            </p>
-            <div class="import-area" id="import-area" role="button" tabindex="0" aria-label="Import JSON file">
-              <div class="import-icon">📂</div>
-              <p>Kéo thả file vào đây<br><small>hoặc nhấn để chọn file .json</small></p>
-            </div>
-            <input type="file" id="fileInput" accept=".json" />
-          </div>
-
-          <div class="settings-card">
-            <h3>🗑️ Quản lý dữ liệu</h3>
-            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px; line-height:1.7;">
-              Xóa toàn bộ dữ liệu từ vựng khỏi trình duyệt. <strong style="color:var(--accent-danger);">Không thể hoàn tác!</strong>
-            </p>
-            <button class="btn btn-danger" id="btn-clear-all" style="width:100%; justify-content:center;">
-              ⚠️ Xóa toàn bộ từ vựng
-            </button>
-          </div>
-
-          <div class="settings-card">
-            <h3>📱 Cách dùng trên điện thoại</h3>
-            <ol style="color:var(--text-secondary); font-size:0.88rem; line-height:2; padding-left:18px;">
-              <li>Mở file <code style="color:var(--accent-primary);">index.html</code> trên máy tính</li>
-              <li>Xuất file JSON từ máy tính (nút "Xuất file JSON")</li>
-              <li>Gửi file JSON sang điện thoại (Zalo, email, Drive...)</li>
-              <li>Mở <code style="color:var(--accent-primary);">index.html</code> trên điện thoại</li>
-              <li>Nhập file JSON vừa nhận vào app</li>
-              <li>Từ vựng đã đồng bộ! 🎉</li>
-            </ol>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
   </main>
 
   <!-- ══════════════════════════════════════
@@ -332,10 +272,6 @@
     <button class="bottom-nav-item" data-tab="random">
       <span class="nav-icon">🎲</span>
       <span>Ôn luyện</span>
-    </button>
-    <button class="bottom-nav-item" data-tab="settings">
-      <span class="nav-icon">⚙️</span>
-      <span>Cài đặt</span>
     </button>
   </nav>
 
