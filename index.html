@@ -22,9 +22,6 @@
       <button class="nav-tab active" data-tab="dashboard" role="tab" aria-selected="true" id="navtab-dashboard">
         🏠 Dashboard
       </button>
-      <button class="nav-tab" data-tab="extract" role="tab" aria-selected="false" id="navtab-extract">
-        ✨ Trích xuất
-      </button>
       <button class="nav-tab" data-tab="vocab" role="tab" aria-selected="false" id="navtab-vocab">
         📖 Từ vựng
       </button>
@@ -87,66 +84,10 @@
         <div class="divider"></div>
 
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="switchTab('extract')">✨ Trích xuất từ vựng mới</button>
           <button class="btn btn-secondary" onclick="switchTab('random')">🎲 Bắt đầu ôn luyện</button>
           <button class="btn btn-secondary" onclick="switchTab('vocab')">📖 Xem toàn bộ từ vựng</button>
         </div>
 
-      </div>
-    </section>
-
-    <!-- ── TAB: EXTRACT ── -->
-    <section class="tab-content" id="tab-extract" role="tabpanel" aria-labelledby="navtab-extract">
-      <div class="section-page">
-        <div class="section-header">
-          <h2 class="section-title">✨ <span>Trích xuất Từ vựng</span></h2>
-        </div>
-
-        <div class="extractor-box">
-          <label for="extractor-input">DÁN ĐOẠN VĂN TIẾNG ANH VÀO ĐÂY</label>
-          <textarea
-            id="extractor-input"
-            class="extractor-textarea"
-            placeholder="Ví dụ: dán bài đọc TOEIC từ Study4, ETS, v.v. vào đây...&#10;&#10;Hệ thống sẽ tự động:&#10;• Lọc bỏ các từ thông dụng (the, a, is, are...)&#10;• Giữ lại các từ quan trọng&#10;• Đánh dấu từ đã có trong kho (màu vàng)&#10;• Khử trùng tự động"
-            aria-label="Input text for vocabulary extraction"
-          ></textarea>
-          <div class="extractor-actions">
-            <button class="btn btn-primary" id="btn-extract">
-              🔍 Trích xuất từ vựng
-            </button>
-            <button class="btn btn-secondary" id="btn-clear-extract">
-              🗑️ Xóa nội dung
-            </button>
-          </div>
-        </div>
-
-        <div class="extracted-preview" id="extracted-preview">
-          <h3>📋 Từ vựng được trích xuất</h3>
-          <div class="extracted-meta" id="extract-meta"></div>
-
-          <div class="word-chips" id="word-chips"></div>
-
-          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
-            💡 <strong>Xanh</strong> = từ mới sẽ thêm vào · <strong>Vàng</strong> = đã có trong kho (không thêm lại) · Nhấn vào từ để bỏ chọn
-          </p>
-
-          <div class="extractor-actions">
-            <button class="btn btn-success" id="btn-add-extracted">
-              ✅ Thêm vào kho từ vựng
-            </button>
-          </div>
-        </div>
-
-        <div class="extractor-box" style="background:rgba(108,99,255,0.05); border-color:rgba(108,99,255,0.2);">
-          <h3 style="font-size:0.95rem; margin-bottom:12px; color:var(--accent-primary);">💡 Hướng dẫn sử dụng</h3>
-          <ol style="color:var(--text-secondary); font-size:0.88rem; line-height:2; padding-left:18px;">
-            <li>Vào <strong>Study4</strong> hoặc bất kỳ trang TOEIC nào, copy bài đọc/câu hỏi</li>
-            <li>Dán vào ô trên và nhấn <strong>"Trích xuất từ vựng"</strong></li>
-            <li>Hệ thống tự lọc stop words, khử trùng, hiển thị danh sách từ tiềm năng</li>
-            <li>Bỏ chọn các từ không muốn thêm, rồi nhấn <strong>"Thêm vào kho"</strong></li>
-            <li>Sang tab <strong>Từ vựng</strong> để chỉnh nghĩa tiếng Việt cho từng từ</li>
-          </ol>
-        </div>
       </div>
     </section>
 
@@ -260,10 +201,6 @@
     <button class="bottom-nav-item active" data-tab="dashboard">
       <span class="nav-icon">🏠</span>
       <span>Home</span>
-    </button>
-    <button class="bottom-nav-item" data-tab="extract">
-      <span class="nav-icon">✨</span>
-      <span>Trích xuất</span>
     </button>
     <button class="bottom-nav-item" data-tab="vocab">
       <span class="nav-icon">📖</span>

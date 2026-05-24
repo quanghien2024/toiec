@@ -545,7 +545,6 @@ function setupEventListeners() {
   document.getElementById('btn-next-random')?.addEventListener('click', doNextRandom);
   document.getElementById('btn-reset-session')?.addEventListener('click', doResetSession);
   document.getElementById('btn-reset-session-2')?.addEventListener('click', doResetSession);
-}
 
   // Keyboard
   document.addEventListener('keydown', (e) => {
